@@ -2,20 +2,16 @@ import { Colors } from "@/constants/colors.constant";
 import { StyleSheet, Text, type TextProps } from "react-native";
 
 export type ThemedTextProps = TextProps & {
-  lightColor?: string;
-  darkColor?: string;
+  color?: string;
   type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link";
 };
 
 export function ThemedText({
   style,
-  lightColor,
-  darkColor,
+  color = Colors.text,
   type = "default",
   ...rest
 }: ThemedTextProps) {
-  const color = Colors.text;
-
   return (
     <Text
       style={[
