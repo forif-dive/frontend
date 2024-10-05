@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -20,15 +21,17 @@ export default function RootLayout() {
   if (!loaded && !error) {
     return null;
   }
-
+  const queryClient = new QueryClient();
   return (
     <GestureHandlerRootView>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="preferences" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <Toast position="bottom" bottomOffset={40} />
+      <QueryClientProvider client={queryClient}>
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen name="preferences" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+        <Toast position="bottom" bottomOffset={40} />
+      </QueryClientProvider>
     </GestureHandlerRootView>
   );
 }

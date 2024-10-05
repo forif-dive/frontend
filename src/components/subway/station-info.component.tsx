@@ -1,96 +1,90 @@
+import axios from 'axios';
+import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { ResultCard, ResultCardProps } from "@/components/home/ResultCard";
-import React, { useState } from "react";
-import { FlatList, ScrollView, StyleSheet, View } from "react-native";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { FlatList, StyleSheet, View } from "react-native";
 import Spinner from "../common/Spinner";
-
+import { useQuery } from "@tanstack/react-query";
 import SubwayMapComponent from "./subway-map.component";
-
 import { stations } from "@/constants/stations.constant";
+import { API_URL } from '@env';
 
 interface Station {
   id: string;
   name: string;
 }
 
-const dummyData: ResultCardProps[] = [
-  {
-    picture:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lov2H0eRjJe61buyn0At--ea4cV-pd8enQ&s",
-    title: "명촌 갈대밭",
-    desc: "아름다운 갈대밭이 펼쳐진 자연 공간으로, 조용하고 평화로운 환경에서 러닝을 즐길 수 있습니다.",
-    distance: "개운포역으로부터 3분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://img4.yna.co.kr/photo/cms/2016/12/09/01/C0A8CAE200000158E153852200000020_P2.jpg",
-    title: "갈맷길",
-    desc: "부산의 해안 경관을 따라 조성된 트레일로, 바다를 배경으로 상쾌한 러닝을 경험할 수 있습니다.",
-    distance: "일광역으로부터 4분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://www.visitbusan.net/uploadImgs/files/cntnts/20191230171623094",
-    title: "온천천 카페거리",
-    desc: "온천천을 따라 조성된 산책로는 러닝과 함께 자연을 즐기기에 좋습니다. 러닝 후에는 근처 카페에서 휴식을 취할 수 있어 편리합니다.",
-    distance: "안락역으로부터 8분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lov2H0eRjJe61buyn0At--ea4cV-pd8enQ&s",
-    title: "명촌 갈대밭",
-    desc: "아름다운 갈대밭이 펼쳐진 자연 공간으로, 조용하고 평화로운 환경에서 러닝을 즐길 수 있습니다.",
-    distance: "개운포역으로부터 3분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://img4.yna.co.kr/photo/cms/2016/12/09/01/C0A8CAE200000158E153852200000020_P2.jpg",
-    title: "갈맷길",
-    desc: "부산의 해안 경관을 따라 조성된 트레일로, 바다를 배경으로 상쾌한 러닝을 경험할 수 있습니다.",
-    distance: "일광역으로부터 4분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://www.visitbusan.net/uploadImgs/files/cntnts/20191230171623094",
-    title: "온천천 카페거리",
-    desc: "온천천을 따라 조성된 산책로는 러닝과 함께 자연을 즐기기에 좋습니다. 러닝 후에는 근처 카페에서 휴식을 취할 수 있어 편리합니다.",
-    distance: "안락역으로부터 8분",
-    meter: 1200,
-  },
-];
+interface Attraction {
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  distance: number;
+  image_url: string;
+}
+
+interface Place {
+  attractions: Attraction[];
+}
 
 export default function StationInfoComponent() {
   const [selectedStation, setSelectedStation] = useState<Station>(stations[0]);
-  const [data, setData] = useState<ResultCardProps[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [nullStation, setNullStation] = useState<Station | null>(null);
+  const [isEmpty, setIsEmpty] = useState(false);
+  const [listData, setListData] = useState<ResultCardProps[]>([]);
+  const errorHandled = useRef(false);
+  
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['station-info', selectedStation.name],
+    queryFn: async () => {
+      setIsEmpty(false);
+      errorHandled.current = false;
+
+      const response = await axios.post<Place>(
+        `${API_URL}/get_attractions_by_station`, 
+        {"station_name": selectedStation.name + "역"}
+      );
+      return response.data;
+    },
+    enabled: !!selectedStation.name,
+    retry: false,
+    
+  });
+
+  useEffect(() => {
+    if (error && !errorHandled.current) {
+      setIsEmpty(true);
+      errorHandled.current = true;
+      setNullStation(selectedStation);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data?.attractions) {
+      const formattedData: ResultCardProps[] = data.attractions.map(item => ({
+        picture: item.image_url,
+        title: item.name,
+        desc: item.description,
+        distance: "",
+        meter: item.distance,
+      }));
+      setListData(formattedData);
+    } else {
+      setListData([]);
+      setIsEmpty(true);
+    }
+  }, [data]);
 
   const handleStationSelect = (station: Station) => {
     setSelectedStation(station);
-    setIsLoading(true);
-    fetchDataForStation(station.name);
-  };
-
-  const fetchDataForStation = async (stationName: string) => {
-    try {
-      // API 호출
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setData(dummyData);
-    } catch (error) {
-      console.error("데이터 가져오기 실패:", error);
-    } finally {
-      setIsLoading(false);
+    if (!(isEmpty && nullStation == station)) {
+      refetch();
     }
   };
 
   return (
-    <View
-      style={[styles.container, selectedStation && styles.containerWithPlaces]}
-    >
+    <View style={[styles.container, selectedStation && styles.containerWithPlaces]}>
       <ThemedView style={styles.mapsection}>
         <SubwayMapComponent
           onStationSelect={handleStationSelect}
@@ -98,17 +92,19 @@ export default function StationInfoComponent() {
         />
       </ThemedView>
 
-      {selectedStation && isLoading && (
+      {isLoading && !isEmpty ? (
         <View style={styles.spinnerContainer}>
           <Spinner size={50} color="#DDDDDD" thickness={4} />
         </View>
-      )}
-
-      {selectedStation && !isLoading && (
-        <ScrollView style={styles.listContainer} nestedScrollEnabled>
+      ) : isEmpty ? (
+        <View style={styles.errorContainer}>
+          <ThemedText style={styles.errorText}>추천 장소가 없습니다.</ThemedText>
+        </View>
+      ) : (
+        <View style={styles.listContainer}>
           <FlatList
             nestedScrollEnabled
-            data={data}
+            data={listData}
             ItemSeparatorComponent={() => (
               <ThemedView
                 style={{
@@ -119,8 +115,9 @@ export default function StationInfoComponent() {
               />
             )}
             renderItem={({ item }) => <ResultCard {...item} />}
+            keyExtractor={(item, index) => `${item.title}-${index}`}
           />
-        </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -139,14 +136,24 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    // paddingVertical: 32,
     paddingHorizontal: 8,
     backgroundColor: "#fff",
   },
   spinnerContainer: {
     flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    paddingTop: "40%",
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: '40%'
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
+
