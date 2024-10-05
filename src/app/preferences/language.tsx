@@ -5,16 +5,23 @@ import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LanguageScreen() {
   const [isKorean, setIsKorean] = useState(true);
   const router = useRouter();
-
+  const widthHeight = Dimensions.get("window").height;
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <ThemedView style={[styles.container]}>
+      <ThemedView
+        style={[
+          styles.container,
+          {
+            minHeight: widthHeight - 200,
+          },
+        ]}
+      >
         <ThemedText type="title" style={{ marginBottom: 8 }}>
           Which Languages do you prefer?
         </ThemedText>
@@ -56,12 +63,11 @@ export default function LanguageScreen() {
             onPress={() => setIsKorean(false)}
           />
         </ThemedView>
-
-        <ThemedView style={styles.buttonContainer}>
-          <Button onPress={() => router.push("/preferences/field")}>
-            {isKorean ? "다음" : "Next"}
-          </Button>
-        </ThemedView>
+      </ThemedView>
+      <ThemedView style={styles.buttonContainer}>
+        <Button onPress={() => router.push("/preferences/field")}>
+          {isKorean ? "다음" : "Next"}
+        </Button>
       </ThemedView>
     </SafeAreaView>
   );

@@ -5,11 +5,12 @@ import { ThemedText } from "../common/ThemedText";
 
 type RecommendLabelProps = {
   children: ReactNode;
+  onPress?: () => void;
 };
 
-export function RecommendLabel({ children }: RecommendLabelProps) {
+export function RecommendLabel({ children, onPress }: RecommendLabelProps) {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <ThemedText color={Colors.icon}>{children}</ThemedText>
     </TouchableOpacity>
   );

@@ -35,6 +35,12 @@
             "./src/assets/fonts/Pretendard-Medium.otf"
           ]
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow DIVE 2024 to use your location."
+        }
       ]
     ],
     "experiments": {
