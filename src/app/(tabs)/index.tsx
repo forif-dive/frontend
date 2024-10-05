@@ -48,11 +48,13 @@ export default function HomeScreen() {
   console.log(location, errorMsg, isLoading, preferences);
 
   const [inputList, setInputList] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
+  const [inputValue, setInputValue] = useState("");
+  const [isLabelShow, setIsLabelShow] = useState(true);
 
   function handleLabelClick(label: string) {
     if (!inputList.includes(label)) {
       setInputList([...inputList, label]);
+      setIsLabelShow(false);
     }
   }
 
@@ -92,15 +94,21 @@ export default function HomeScreen() {
         ListFooterComponent={
           <>
             <RecommendBtn />
-            <ThemedView style={styles.recommendContainer}>
-              {recommendLabels.map((label) => (
-                <RecommendLabel
-                  key={label}
-                  onPress={() => handleLabelClick(label)}
-                >
-                  {label}
-                </RecommendLabel>
-              ))}
+            {isLabelShow && (
+              <ThemedView style={styles.recommendContainer}>
+                {recommendLabels.map((label) => (
+                  <RecommendLabel
+                    key={label}
+                    onPress={() => handleLabelClick(label)}
+                  >
+                    {label}
+                  </RecommendLabel>
+                ))}
+              </ThemedView>
+            )}
+
+            <ThemedView style={!isLabelShow && styles.recommendContainer}>
+              <ThemedText>{inputList[0]}</ThemedText>
             </ThemedView>
             <Input
               value={inputValue}
@@ -129,6 +137,6 @@ const styles = StyleSheet.create({
     gap: 8,
     alignItems: "flex-end",
     marginTop: 32,
-    marginBottom: 48,
+    marginBottom: 32,
   },
 });

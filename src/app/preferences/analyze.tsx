@@ -31,7 +31,7 @@ export default function AnalyzeScreen() {
         style={[
           styles.container,
           {
-            minHeight: windowHeight - 200,
+            minHeight: windowHeight - 160,
           },
         ]}
       >
