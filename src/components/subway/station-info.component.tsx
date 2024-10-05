@@ -7,7 +7,6 @@ import { FlatList, StyleSheet, View } from "react-native";
 import Spinner from "../common/Spinner";
 import { useQuery } from "@tanstack/react-query";
 import SubwayMapComponent from "./subway-map.component";
-
 import { stations } from "@/constants/stations.constant";
 import { API_URL } from '@env';
 
