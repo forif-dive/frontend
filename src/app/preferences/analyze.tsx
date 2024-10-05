@@ -3,22 +3,17 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import * as Progress from "react-native-progress";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AnalyzeScreen() {
-  const { selectedCategories } = useLocalSearchParams() as {
-    selectedCategories: string;
-  };
   const windowWidth = useWindowWidth();
 
   const [progress, setProgress] = useState(0);
   const router = useRouter();
-
-  console.log(selectedCategories);
 
   useEffect(() => {
     if (progress < 1) {
@@ -33,7 +28,7 @@ export default function AnalyzeScreen() {
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
       <ThemedView style={[styles.container]}>
         <ThemedText type="title" style={{ marginBottom: 8 }}>
-          거의 다 되었습니다...
+          {progress === 1 ? "라이프스타일 분석 완료" : "거의 다 되었습니다..."}
         </ThemedText>
         <ThemedText
           type="subtitle"
@@ -60,16 +55,16 @@ export default function AnalyzeScreen() {
             <Image
               source={require("../../assets/images/3d-check.jpg")}
               style={{
-                width: 256,
-                height: 256,
+                width: 288,
+                height: 288,
               }}
             />
           ) : (
             <Image
-              source={require("../../assets/images/3d-fire.png")}
+              source={require("../../assets/images/3d-fishing.png")}
               style={{
-                width: 256,
-                height: 256,
+                width: 288,
+                height: 288,
               }}
             />
           )}
