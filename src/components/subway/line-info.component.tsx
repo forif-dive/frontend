@@ -11,9 +11,11 @@ export default function LineInfoComponent() {
                 <ThemedText>총 65.7km, 23개 역을 운영하며, 편도 기준 75분 소요됩니다.</ThemedText>
             </View>
 
-            <Image source={require('./../../assets/images/subway/subway.jpg')}
-                style={styles.image}
-                resizeMode="contain"/>
+            <View style={styles.imageContainer}>
+                <Image source={require('./../../assets/images/subway/subway.jpg')}
+                    style={styles.image}
+                    resizeMode="contain"/>
+            </View>
 
             <View>
                 <ThemedText style={styles.boldText}>광역 생활권 형성</ThemedText>
@@ -42,6 +44,10 @@ const styles = StyleSheet.create({
     image: {
       height: 150,
       width: '100%'
+    },
+    imageContainer: {
+        borderRadius: 8,
+        overflow: 'hidden'
     }
   });
   
