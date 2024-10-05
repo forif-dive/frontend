@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     },
     mapContainer: {
         height: '100%',
-        paddingVertical: 10,
+        paddingVertical: 8,
     },
     line: {
         position: 'absolute',
@@ -103,13 +103,13 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 4,
-        backgroundColor: '#4a90e2',
+        backgroundColor: '#0054a6', // 0054a6
     },
     station: {
         position: 'absolute',
         alignItems: 'center',
         top: '50%',
-        marginTop: -5,
+        marginTop: -2.5,
         width: STATION_WIDTH,
     },
     stationDot: {
@@ -118,20 +118,20 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: 'white',
         borderWidth: 2,
-        borderColor: '#4a90e2',
+        borderColor: '#0054a6',
     },
     selectedStation: {
         transform: [{ scale: 1.2 }],
     },
     stationName: {
-        marginTop: 5,
-        fontSize: 12,
+        marginTop: 4,
+        fontSize: 14,
         color: '#333',
         textAlign: 'center',
     },
     selectedStationName: {
         fontWeight: 'bold',
-        color: '#4a90e2', // 선택된 역 이름의 색상을 변경할 수도 있습니다.
+        color: '#0054a6', // 선택된 역 이름의 색상을 변경할 수도 있습니다.
     },
 });
 

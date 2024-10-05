@@ -18,7 +18,7 @@ export default function StationInfoComponent() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView>
             <ThemedView style={styles.mapsection}>
                 <SubwayMapComponent onStationSelect={handleStationSelect} />
             </ThemedView>
@@ -44,17 +44,12 @@ export default function StationInfoComponent() {
 
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-    //   backgroundColor: '#f0f0f0',
-    },
     mapsection: {
         marginBottom: 16,
     },
     section: {
         padding: 16,
         marginBottom: 16,
-    //   backgroundColor: 'red',
         borderRadius: 8,
         borderColor: '#f0f0f0',
         borderWidth: 1

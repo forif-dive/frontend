@@ -1,6 +1,6 @@
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet } from "react-native";
   
 export default function LineInfoComponent() {
 
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     image: {
-      height: 130,
+      height: 150,
       width: '100%'
     }
   });
