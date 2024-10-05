@@ -5,9 +5,9 @@ import { RecommendBtn } from "@/components/home/RecommendBtn";
 import { RecommendLabel } from "@/components/home/RecommendLabel";
 import { ResultCard, ResultCardProps } from "@/components/home/ResultCard";
 import useLocation from "@/hooks/useLocation";
-import usePreferenceStore from "@/stores/preference.store";
 import { useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { Dimensions, FlatList, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const data: ResultCardProps[] = [
   {
     picture:
@@ -42,10 +42,10 @@ const recommendLabels = [
 ];
 
 export default function HomeScreen() {
-  const { location, errorMsg, isLoading } = useLocation();
-  const { preferences } = usePreferenceStore();
-
-  console.log(location, errorMsg, isLoading, preferences);
+  const { location, isLoading } = useLocation();
+  // const { preferences } = usePreferenceStore();
+  const insets = useSafeAreaInsets();
+  const windowHeight = Dimensions.get("window").height;
 
   const [inputList, setInputList] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -110,16 +110,25 @@ export default function HomeScreen() {
             <ThemedView style={!isLabelShow && styles.recommendContainer}>
               <ThemedText>{inputList[0]}</ThemedText>
             </ThemedView>
-            <Input
-              value={inputValue}
-              onChangeText={(t) => setInputValue(t)}
-              placeholder="궁금하거나 필요한 것을 말씀해 주세요"
-              blurOnSubmit={true}
-              onSubmitEditing={() => handleSubmit()}
-            />
           </>
         }
       />
+      <ThemedView
+        style={{
+          position: "absolute",
+          top: windowHeight - insets.bottom - 220,
+          width: "100%",
+          left: 16,
+        }}
+      >
+        <Input
+          value={inputValue}
+          onChangeText={(t) => setInputValue(t)}
+          placeholder="궁금하거나 필요한 것을 말씀해 주세요"
+          blurOnSubmit={true}
+          onSubmitEditing={() => handleSubmit()}
+        />
+      </ThemedView>
     </ThemedView>
   );
 }

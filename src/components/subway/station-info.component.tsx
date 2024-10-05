@@ -1,8 +1,7 @@
-import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { ResultCard, ResultCardProps } from "@/components/home/ResultCard";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, FlatList, View } from "react-native";
+import { FlatList, ScrollView, StyleSheet, View } from "react-native";
 import Spinner from "../common/Spinner";
 
 import SubwayMapComponent from "./subway-map.component";
@@ -79,7 +78,7 @@ export default function StationInfoComponent() {
   const fetchDataForStation = async (stationName: string) => {
     try {
       // API 호출
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       setData(dummyData);
     } catch (error) {
       console.error("데이터 가져오기 실패:", error);
@@ -89,46 +88,51 @@ export default function StationInfoComponent() {
   };
 
   return (
-      <View style={[styles.container, selectedStation && styles.containerWithPlaces]}>
-        <ThemedView style={styles.mapsection}>
-          <SubwayMapComponent onStationSelect={handleStationSelect} initialStation={selectedStation}/>
-        </ThemedView>
+    <View
+      style={[styles.container, selectedStation && styles.containerWithPlaces]}
+    >
+      <ThemedView style={styles.mapsection}>
+        <SubwayMapComponent
+          onStationSelect={handleStationSelect}
+          initialStation={selectedStation}
+        />
+      </ThemedView>
 
-        {selectedStation && isLoading && (
-          <View style={styles.spinnerContainer}>
-            <Spinner size={50} color="#DDDDDD" thickness={4} />
-          </View>
-        )}
+      {selectedStation && isLoading && (
+        <View style={styles.spinnerContainer}>
+          <Spinner size={50} color="#DDDDDD" thickness={4} />
+        </View>
+      )}
 
-        {selectedStation && !isLoading && (
-          <ScrollView style={styles.listContainer} nestedScrollEnabled>
-            <FlatList
-              nestedScrollEnabled
-              data={data}
-              ItemSeparatorComponent={() => (
-                <ThemedView
-                  style={{
-                    height: 2,
-                    backgroundColor: "#E5E5E5",
-                    marginVertical: 24,
-                  }}
-                />
-              )}
-              renderItem={({ item }) => <ResultCard {...item} />}
-            />
-          </ScrollView>
-        )}
-      </View>
+      {selectedStation && !isLoading && (
+        <ScrollView style={styles.listContainer} nestedScrollEnabled>
+          <FlatList
+            nestedScrollEnabled
+            data={data}
+            ItemSeparatorComponent={() => (
+              <ThemedView
+                style={{
+                  height: 2,
+                  backgroundColor: "#E5E5E5",
+                  marginVertical: 24,
+                }}
+              />
+            )}
+            renderItem={({ item }) => <ResultCard {...item} />}
+          />
+        </ScrollView>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexShrink: 1, 
+    flexShrink: 1,
     flexGrow: 0,
   },
   containerWithPlaces: {
-    height: 600
+    height: 600,
   },
   mapsection: {
     marginBottom: 16,
@@ -141,8 +145,8 @@ const styles = StyleSheet.create({
   },
   spinnerContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: '40%'
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: "40%",
   },
 });

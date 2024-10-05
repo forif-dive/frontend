@@ -26,7 +26,6 @@ export default function LanguageScreen() {
           Which Languages do you prefer?
         </ThemedText>
         <ThemedText
-          type="subtitle"
           style={{ marginBottom: 40, fontWeight: "medium" }}
           color="#656F79"
         >

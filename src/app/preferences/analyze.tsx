@@ -83,7 +83,7 @@ export default function AnalyzeScreen() {
           onPress={() => router.push("/(tabs)/")}
           disabled={progress !== 1}
         >
-          시작하기!
+          준성님으로 시작하기!
         </Button>
       </ThemedView>
     </SafeAreaView>
