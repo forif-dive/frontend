@@ -4,7 +4,10 @@ import { ThemedView } from "@/components/common/ThemedView";
 import { RecommendBtn } from "@/components/home/RecommendBtn";
 import { RecommendLabel } from "@/components/home/RecommendLabel";
 import { ResultCard, ResultCardProps } from "@/components/home/ResultCard";
-import { FlatList, ScrollView, StyleSheet, View } from "react-native";
+import useLocation from "@/hooks/useLocation";
+import { useState } from "react";
+import { Dimensions, FlatList, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 const data: ResultCardProps[] = [
   {
     picture:
@@ -32,18 +35,51 @@ const data: ResultCardProps[] = [
   },
 ];
 
+const recommendLabels = [
+  "안락역의 다른 구경거리를 추천해줘",
+  "명촌 갈대밭 근처에 있는 맛있는 카페를 추천해줘",
+  "꽤 많은 러닝 크루들과 뛸 장소를 추천해줘",
+];
+
 export default function HomeScreen() {
+  const { location, isLoading } = useLocation();
+  // const { preferences } = usePreferenceStore();
+  const insets = useSafeAreaInsets();
+  const windowHeight = Dimensions.get("window").height;
+
+  const [inputList, setInputList] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [isLabelShow, setIsLabelShow] = useState(true);
+
+  function handleLabelClick(label: string) {
+    if (!inputList.includes(label)) {
+      setInputList([...inputList, label]);
+      setIsLabelShow(false);
+    }
+  }
+
+  function handleSubmit() {
+    if (inputValue && !inputList.includes(inputValue)) {
+      setInputList([...inputList, inputValue]);
+      setInputValue("");
+    }
+  }
+
   return (
-    <ScrollView style={styles.container} nestedScrollEnabled>
-      <ThemedText
-        type="title"
-        style={{ fontWeight: "medium", fontSize: 28, marginBottom: 24 }}
-      >
-        날씨에 아름다운 경치와 달려보시는 건 어떤가요? 동해선의 매력을
-        느껴보세요.
-      </ThemedText>
+    <ThemedView style={styles.container}>
       <FlatList
-        nestedScrollEnabled
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <ThemedText
+            type="title"
+            style={{ fontWeight: "medium", fontSize: 28, marginBottom: 24 }}
+          >
+            {isLoading
+              ? "위치 정보를 기반으로 추천해드릴게요. 잠시만 기다려주세요."
+              : location?.coords.latitude}
+          </ThemedText>
+        }
         data={data}
         ItemSeparatorComponent={() => (
           <ThemedView
@@ -55,21 +91,45 @@ export default function HomeScreen() {
           />
         )}
         renderItem={({ item }) => <ResultCard {...item} />}
+        ListFooterComponent={
+          <>
+            <RecommendBtn />
+            {isLabelShow && (
+              <ThemedView style={styles.recommendContainer}>
+                {recommendLabels.map((label) => (
+                  <RecommendLabel
+                    key={label}
+                    onPress={() => handleLabelClick(label)}
+                  >
+                    {label}
+                  </RecommendLabel>
+                ))}
+              </ThemedView>
+            )}
+
+            <ThemedView style={!isLabelShow && styles.recommendContainer}>
+              <ThemedText>{inputList[0]}</ThemedText>
+            </ThemedView>
+          </>
+        }
       />
-      <RecommendBtn />
-      <ThemedView style={styles.recommendContainer}>
-        <RecommendLabel>안락역의 다른 구경거리를 추천해줘</RecommendLabel>
-        <RecommendLabel>
-          명촌 갈대밭 근처에 있는 맛있는 카페를 추천해줘
-        </RecommendLabel>
-        <RecommendLabel>
-          꽤 많은 러닝 크루들과 뛸 장소를 추천해줘
-        </RecommendLabel>
+      <ThemedView
+        style={{
+          position: "absolute",
+          top: windowHeight - insets.bottom - 220,
+          width: "100%",
+          left: 16,
+        }}
+      >
+        <Input
+          value={inputValue}
+          onChangeText={(t) => setInputValue(t)}
+          placeholder="궁금하거나 필요한 것을 말씀해 주세요"
+          blurOnSubmit={true}
+          onSubmitEditing={() => handleSubmit()}
+        />
       </ThemedView>
-      <View style={{ marginBottom: 56 }}>
-        <Input placeholder="궁금하거나 필요한 것을 말씀해 주세요" />
-      </View>
-    </ScrollView>
+    </ThemedView>
   );
 }
 
@@ -86,6 +146,6 @@ const styles = StyleSheet.create({
     gap: 8,
     alignItems: "flex-end",
     marginTop: 32,
-    marginBottom: 48,
+    marginBottom: 32,
   },
 });

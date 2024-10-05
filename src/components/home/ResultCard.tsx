@@ -41,7 +41,7 @@ export function ResultCard({
           uri: picture,
         }}
         resizeMode="cover"
-        style={{ width: 120, height: 120 }}
+        style={{ width: 80, height: 80 }}
       />
       <ThemedView style={styles.textContainer}>
         <View

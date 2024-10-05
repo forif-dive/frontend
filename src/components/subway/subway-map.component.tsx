@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { stations } from "@/constants/stations.constant";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
+import React, { useEffect, useState } from "react";
 import {
-  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
-import { stations } from "@/constants/stations.constant";
 
 interface Station {
   id: string;
@@ -21,17 +20,22 @@ interface SubwayMapProps {
 }
 
 const STATION_WIDTH = 80;
-const windowWidth = useWindowWidth();
 
-const SubwayMapComponent: React.FC<SubwayMapProps> = ({ onStationSelect, initialStation }) => {
-  const [selectedStation, setSelectedStation] = useState<Station | null>(initialStation || null);
+const SubwayMapComponent: React.FC<SubwayMapProps> = ({
+  onStationSelect,
+  initialStation,
+}) => {
+  const [selectedStation, setSelectedStation] = useState<Station | null>(
+    initialStation || null
+  );
+  const windowWidth = useWindowWidth();
 
   useEffect(() => {
     if (initialStation) {
       setSelectedStation(initialStation);
       onStationSelect(initialStation);
     }
-  }, [initialStation]);
+  }, [initialStation, onStationSelect]);
 
   const handleStationPress = (station: Station) => {
     setSelectedStation(station);

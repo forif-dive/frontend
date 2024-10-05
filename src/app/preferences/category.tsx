@@ -2,19 +2,16 @@ import { Button } from "@/components/common/Button";
 import { Chip } from "@/components/common/Chip";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
-import { Colors } from "@/constants/colors.constant";
 import { categories } from "@/constants/field.constant";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import usePreferenceStore from "@/stores/preference.store";
+import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
 export default function CategoryScreen() {
   const router = useRouter();
-  const { selectedFields } = useLocalSearchParams() as {
-    selectedFields: string;
-  };
-  const selectedFieldsArray = selectedFields.split(",");
+  const windowHeight = Dimensions.get("window").height;
+  const { preferences, setPreferences } = usePreferenceStore();
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
@@ -27,12 +24,27 @@ export default function CategoryScreen() {
   }
 
   const filteredCategories = categories.filter((category) =>
-    selectedFieldsArray.includes(category.name)
+    preferences.includes(category.name)
   );
 
+  const handleNext = () => {
+    const combinedPreferences = [...preferences, ...selectedCategories];
+    setPreferences(combinedPreferences);
+    router.push({
+      pathname: "/preferences/analyze",
+    });
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <ScrollView style={[styles.container]}>
+    <ScrollView style={{ backgroundColor: "#fff" }}>
+      <ScrollView
+        style={[
+          styles.container,
+          {
+            minHeight: windowHeight - 200,
+          },
+        ]}
+      >
         <ThemedText type="title" style={{ marginBottom: 8 }}>
           준성님의 라이프스타일을 선택해주세요.
         </ThemedText>
@@ -75,27 +87,27 @@ export default function CategoryScreen() {
             </ThemedView>
           </View>
         ))}
-        <ThemedView>
-          <Button
-            disabled={selectedCategories.length === 0}
-            onPress={() =>
-              router.push({
-                pathname: "/preferences/analyze",
-                params: { selectedCategories },
-              })
-            }
-          >
-            다음
-          </Button>
-        </ThemedView>
       </ScrollView>
-    </SafeAreaView>
+      <ThemedView style={styles.buttonContainer}>
+        <Button disabled={selectedCategories.length === 0} onPress={handleNext}>
+          다음
+        </Button>
+      </ThemedView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 48,
     paddingHorizontal: 24,
+    backgroundColor: "#fff",
+    position: "relative",
+  },
+  buttonContainer: {
+    paddingHorizontal: 24,
+    paddingBottom: 36,
+    backgroundColor: "#fff",
   },
 });

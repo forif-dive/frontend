@@ -5,12 +5,13 @@ import { Colors } from "@/constants/colors.constant";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Dimensions, Image, StyleSheet, View } from "react-native";
 import * as Progress from "react-native-progress";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AnalyzeScreen() {
   const windowWidth = useWindowWidth();
+  const windowHeight = Dimensions.get("window").height;
 
   const [progress, setProgress] = useState(0);
   const router = useRouter();
@@ -26,7 +27,14 @@ export default function AnalyzeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
-      <ThemedView style={[styles.container]}>
+      <ThemedView
+        style={[
+          styles.container,
+          {
+            minHeight: windowHeight - 160,
+          },
+        ]}
+      >
         <ThemedText type="title" style={{ marginBottom: 8 }}>
           {progress === 1 ? "라이프스타일 분석 완료" : "거의 다 되었습니다..."}
         </ThemedText>
@@ -69,14 +77,14 @@ export default function AnalyzeScreen() {
             />
           )}
         </View>
-        <ThemedView style={styles.buttonContainer}>
-          <Button
-            onPress={() => router.push("/(tabs)/")}
-            disabled={progress !== 1}
-          >
-            시작하기!
-          </Button>
-        </ThemedView>
+      </ThemedView>
+      <ThemedView style={styles.buttonContainer}>
+        <Button
+          onPress={() => router.push("/(tabs)/")}
+          disabled={progress !== 1}
+        >
+          준성님으로 시작하기!
+        </Button>
       </ThemedView>
     </SafeAreaView>
   );
