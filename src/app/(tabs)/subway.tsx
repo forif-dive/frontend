@@ -51,6 +51,7 @@ export default function SubwayScreen() {
           )}
         </View>
       ))}
+
     </ThemedView>
   );
 }
