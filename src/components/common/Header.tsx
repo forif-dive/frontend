@@ -1,10 +1,11 @@
+import { Colors } from "@/constants/colors.constant";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "./ThemedText";
-export function Header() {
+export function Header({ title = "Header Title" }: { title?: string }) {
   const router = useRouter();
 
   return (
@@ -12,7 +13,7 @@ export function Header() {
       <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
         <Feather name="arrow-left" size={24} />
       </TouchableOpacity>
-      <ThemedText type="subtitle">Initial Preferences</ThemedText>
+      <ThemedText type="subtitle">{title}</ThemedText>
     </SafeAreaView>
   );
 }
@@ -25,6 +26,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 16,
+    backgroundColor: Colors.background,
   },
   backButton: {
     position: "absolute",

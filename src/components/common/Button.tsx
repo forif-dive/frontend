@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -6,18 +6,28 @@ import {
 } from "react-native";
 import { ThemedText } from "./ThemedText";
 
-export const Button = forwardRef<
-  TouchableOpacity,
-  { children: ReactNode } & TouchableOpacityProps
->(({ children, ...props }, ref) => {
+type ButtonProps = {
+  children: ReactNode;
+  disabled?: boolean;
+} & TouchableOpacityProps;
+
+export const Button = ({ children, disabled, ...props }: ButtonProps) => {
   return (
-    <TouchableOpacity style={styles.button} {...props} ref={ref}>
-      <ThemedText style={styles.content} type="defaultSemiBold">
+    <TouchableOpacity
+      style={[styles.button, disabled && { backgroundColor: "#E5E5E5" }]}
+      disabled={disabled}
+      {...props}
+    >
+      <ThemedText
+        style={styles.content}
+        type="defaultSemiBold"
+        disabled={disabled}
+      >
         {children}
       </ThemedText>
     </TouchableOpacity>
   );
-});
+};
 
 const styles = StyleSheet.create({
   button: {

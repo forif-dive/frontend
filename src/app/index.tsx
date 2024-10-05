@@ -23,7 +23,7 @@ export default function SignInScreen() {
         </ThemedText>
         <AnimatedLineDrawing />
         <ThemedView style={styles.buttonContainer}>
-          <Button onPress={() => router.push("/initial-prefer")}>
+          <Button onPress={() => router.push("/preferences")}>
             바로 시작하기
           </Button>
         </ThemedView>

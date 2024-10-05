@@ -22,7 +22,7 @@ export default function AnimatedLineDrawing() {
 
   useEffect(() => {
     x2.value = withTiming(windowWidth - 48, { duration: 2000 });
-  }, []);
+  }, [windowWidth, x2]);
 
   return (
     <View>
