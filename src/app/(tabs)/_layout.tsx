@@ -1,3 +1,4 @@
+import { HomeHeader } from "@/components/home/HomeHeader";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/colors.constant";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,14 +9,13 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors.tint,
-        headerShown: false,
         tabBarShowLabel: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          header: () => <HomeHeader />,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={"home"} color={color} />
           ),
@@ -25,6 +25,7 @@ export default function TabLayout() {
         name="subway"
         options={{
           title: "Train",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <MaterialIcons
               name="train"

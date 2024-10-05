@@ -1,5 +1,5 @@
-import RadioButton from "@/components/common/RadioButton";
 import { Button } from "@/components/common/Button";
+import RadioButton from "@/components/common/RadioButton";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
