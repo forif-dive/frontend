@@ -3,64 +3,126 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { RecommendBtn } from "@/components/home/RecommendBtn";
 import { RecommendLabel } from "@/components/home/RecommendLabel";
-import { ResultCard, ResultCardProps } from "@/components/home/ResultCard";
+import { ResultCard } from "@/components/home/ResultCard";
 import useLocation from "@/hooks/useLocation";
-import { useState } from "react";
+import { useTypingAnimation } from "@/hooks/useTypingAnimation";
+import { chat } from "@/services/chat.service";
+import { Greeting } from "@/services/place.service";
+import {
+  getAttractionsByStation,
+  getStation,
+} from "@/services/station.service";
+import usePreferenceStore from "@/stores/preference.store";
+import { Attraction, Recommendation } from "@/types/station";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Dimensions, FlatList, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-const data: ResultCardProps[] = [
-  {
-    picture:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5lov2H0eRjJe61buyn0At--ea4cV-pd8enQ&s",
-    title: "명촌 갈대밭",
-    desc: "아름다운 갈대밭이 펼쳐진 자연 공간으로, 조용하고 평화로운 환경에서 러닝을 즐길 수 있습니다.",
-    distance: "개운포역으로부터 3분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://img4.yna.co.kr/photo/cms/2016/12/09/01/C0A8CAE200000158E153852200000020_P2.jpg",
-    title: "갈맷길",
-    desc: "부산의 해안 경관을 따라 조성된 트레일로, 바다를 배경으로 상쾌한 러닝을 경험할 수 있습니다.",
-    distance: "일광역으로부터 4분",
-    meter: 1200,
-  },
-  {
-    picture:
-      "https://www.visitbusan.net/uploadImgs/files/cntnts/20191230171623094",
-    title: "온천천 카페거리",
-    desc: "온천천을 따라 조성된 산책로는 러닝과 함께 자연을 즐기기에 좋습니다. 러닝 후에는 근처 카페에서 휴식을 취할 수 있어 편리합니다.",
-    distance: "안락역으로부터 8분",
-    meter: 1200,
-  },
-];
-
-const recommendLabels = [
-  "안락역의 다른 구경거리를 추천해줘",
-  "명촌 갈대밭 근처에 있는 맛있는 카페를 추천해줘",
-  "꽤 많은 러닝 크루들과 뛸 장소를 추천해줘",
-];
 
 export default function HomeScreen() {
   const { location, isLoading } = useLocation();
-  // const { preferences } = usePreferenceStore();
+  const { preferences } = usePreferenceStore();
   const insets = useSafeAreaInsets();
   const windowHeight = Dimensions.get("window").height;
 
-  const [inputList, setInputList] = useState<string[]>([]);
+  const [inputList, setInputList] = useState<
+    (string | Recommendation | Attraction)[]
+  >([]);
+
   const [inputValue, setInputValue] = useState("");
-  const [isLabelShow, setIsLabelShow] = useState(true);
+  const [isLabelVisible, setIsLabelVisible] = useState(true);
+  const { data: greeting, isLoading: isGreetingLoading } = useQuery({
+    queryKey: [preferences, location, "greeting"],
+    queryFn: async () => {
+      const data = await Greeting({
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
+        preferences: preferences,
+      });
+      return data;
+    },
+    enabled: !!location?.coords,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (greeting) {
+      setInputList((prev) => [...prev, ...greeting.recommendations]);
+    }
+  }, [greeting]);
+
+  const animatedGreeting = useTypingAnimation(greeting?.greeting || "", 20);
+
+  const { data: station, isLoading: isStationLoading } = useQuery({
+    queryKey: ["station"],
+    queryFn: async () => {
+      const data = await getStation({
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
+      });
+      return data;
+    },
+    enabled: !!location?.coords,
+    retry: false,
+  });
+
+  const { data: attractions } = useQuery({
+    queryKey: ["attractions"],
+    queryFn: async () => {
+      const data = await getAttractionsByStation({
+        station_name: station?.station_name,
+      });
+      return data;
+    },
+    enabled: !!station?.station_name,
+    retry: false,
+  });
+
+  function recommendationToString(recommendation: Recommendation): string {
+    return `Attraction Name: ${recommendation.name}, Description: ${recommendation.description}, Distance: ${recommendation.distance}m, Time: ${recommendation.time}min, Image URL: ${recommendation.image_url}`;
+  }
 
   function handleLabelClick(label: string) {
-    if (!inputList.includes(label)) {
+    setIsLabelVisible(false);
+    if (attractions && !inputList.includes(label)) {
+      setInputList([...inputList, label, ...attractions.attractions]);
+    } else if (!inputList.includes(label)) {
       setInputList([...inputList, label]);
-      setIsLabelShow(false);
+    }
+
+    handleChatResponse(label);
+  }
+
+  async function handleChatResponse(userInput: string) {
+    try {
+      // previous_chat에 들어갈 값을 필터링 및 변환
+      const previousChatStrings = inputList.map((item) => {
+        if (typeof item === "string") {
+          return item;
+        } else {
+          return recommendationToString(item as Recommendation);
+        }
+      });
+
+      const { response } = await chat({
+        latitude: location?.coords.latitude,
+        longitude: location?.coords.longitude,
+        preferences: preferences,
+        previous_chat: [...previousChatStrings, userInput],
+      });
+
+      setInputList((prev) => [...prev, response]);
+    } catch (e) {
+      console.error(e);
     }
   }
 
-  function handleSubmit() {
-    if (inputValue && !inputList.includes(inputValue)) {
+  async function handleSubmit() {
+    if (inputValue) {
       setInputList([...inputList, inputValue]);
+      setIsLabelVisible(false);
+      // AI 응답 처리
+      handleChatResponse(inputValue);
       setInputValue("");
     }
   }
@@ -71,16 +133,38 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <ThemedText
-            type="title"
-            style={{ fontWeight: "medium", fontSize: 28, marginBottom: 24 }}
-          >
-            {isLoading
-              ? "위치 정보를 기반으로 추천해드릴게요. 잠시만 기다려주세요."
-              : location?.coords.latitude}
-          </ThemedText>
+          <>
+            <ThemedText
+              type="title"
+              style={{
+                fontWeight: "medium",
+                fontSize: 28,
+                marginBottom: 24,
+                minHeight: 96,
+              }}
+            >
+              {isGreetingLoading || isLoading
+                ? "위치 정보를 기반으로 추천해드릴게요. 잠시만 기다려주세요."
+                : animatedGreeting}
+            </ThemedText>
+            <ThemedView
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "flex-end",
+              }}
+            >
+              <ThemedText type="defaultSemiBold">
+                {isStationLoading
+                  ? "근처 역 정보를 불러오는 중..."
+                  : `현재 위치 : ${
+                      station ? station.station_name : "위치를 불러오는 중"
+                    }`}
+              </ThemedText>
+            </ThemedView>
+          </>
         }
-        data={data}
+        data={inputList || []}
         ItemSeparatorComponent={() => (
           <ThemedView
             style={{
@@ -90,13 +174,51 @@ export default function HomeScreen() {
             }}
           />
         )}
-        renderItem={({ item }) => <ResultCard {...item} />}
+        // Result
+        renderItem={({ item }) => {
+          const isUser = typeof item === "string";
+
+          if (isUser) {
+            return (
+              <ThemedText
+                style={{
+                  alignSelf: "flex-end",
+                  padding: 10,
+                  borderRadius: 10,
+                  marginVertical: 4,
+                }}
+              >
+                {item as string}
+              </ThemedText>
+            );
+          } else {
+            const recommendation = item as Recommendation;
+            return (
+              <ResultCard
+                title={recommendation.name}
+                desc={recommendation.description}
+                distance={recommendation.time}
+                meter={recommendation.distance}
+                picture={recommendation.image_url}
+              />
+            );
+          }
+        }}
         ListFooterComponent={
           <>
-            <RecommendBtn />
-            {isLabelShow && (
+            {greeting?.recommendations && <RecommendBtn />}
+            {greeting?.recommendations && isLabelVisible && (
               <ThemedView style={styles.recommendContainer}>
-                {recommendLabels.map((label) => (
+                <RecommendLabel
+                  onPress={() =>
+                    handleLabelClick(
+                      `${station?.station_name} 근처의 다른 구경거리를 추천해줘`
+                    )
+                  }
+                >
+                  {station?.station_name} 근처의 다른 구경거리를 추천해줘
+                </RecommendLabel>
+                {greeting.suggested_questions.map((label) => (
                   <RecommendLabel
                     key={label}
                     onPress={() => handleLabelClick(label)}
@@ -106,13 +228,10 @@ export default function HomeScreen() {
                 ))}
               </ThemedView>
             )}
-
-            <ThemedView style={!isLabelShow && styles.recommendContainer}>
-              <ThemedText>{inputList[0]}</ThemedText>
-            </ThemedView>
           </>
         }
       />
+      {/* Input */}
       <ThemedView
         style={{
           position: "absolute",
@@ -145,7 +264,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 8,
     alignItems: "flex-end",
-    marginTop: 32,
-    marginBottom: 32,
+    marginVertical: 32,
   },
 });

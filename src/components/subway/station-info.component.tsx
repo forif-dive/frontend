@@ -1,14 +1,15 @@
-import axios from 'axios';
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { ResultCard, ResultCardProps } from "@/components/home/ResultCard";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import { stations } from "@/constants/stations.constant";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import React, { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import Spinner from "../common/Spinner";
-import { useQuery } from "@tanstack/react-query";
 import SubwayMapComponent from "./subway-map.component";
-import { stations } from "@/constants/stations.constant";
-import { API_URL } from '@env';
+
+const API_URL = "http://3.36.99.77:8000";
 
 interface Station {
   id: string;
@@ -34,22 +35,21 @@ export default function StationInfoComponent() {
   const [isEmpty, setIsEmpty] = useState(false);
   const [listData, setListData] = useState<ResultCardProps[]>([]);
   const errorHandled = useRef(false);
-  
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['station-info', selectedStation.name],
+    queryKey: ["station-info", selectedStation.name],
     queryFn: async () => {
       setIsEmpty(false);
       errorHandled.current = false;
 
       const response = await axios.post<Place>(
-        `${API_URL}/get_attractions_by_station`, 
-        {"station_name": selectedStation.name + "역"}
+        `${API_URL}/get_attractions_by_station`,
+        { station_name: selectedStation.name + "역" }
       );
       return response.data;
     },
     enabled: !!selectedStation.name,
     retry: false,
-    
   });
 
   useEffect(() => {
@@ -58,11 +58,11 @@ export default function StationInfoComponent() {
       errorHandled.current = true;
       setNullStation(selectedStation);
     }
-  }, [error]);
+  }, [error, selectedStation]);
 
   useEffect(() => {
     if (data?.attractions) {
-      const formattedData: ResultCardProps[] = data.attractions.map(item => ({
+      const formattedData: ResultCardProps[] = data.attractions.map((item) => ({
         picture: item.image_url,
         title: item.name,
         desc: item.description,
@@ -78,13 +78,15 @@ export default function StationInfoComponent() {
 
   const handleStationSelect = (station: Station) => {
     setSelectedStation(station);
-    if (!(isEmpty && nullStation == station)) {
+    if (!(isEmpty && nullStation === station)) {
       refetch();
     }
   };
 
   return (
-    <View style={[styles.container, selectedStation && styles.containerWithPlaces]}>
+    <View
+      style={[styles.container, selectedStation && styles.containerWithPlaces]}
+    >
       <ThemedView style={styles.mapsection}>
         <SubwayMapComponent
           onStationSelect={handleStationSelect}
@@ -98,7 +100,9 @@ export default function StationInfoComponent() {
         </View>
       ) : isEmpty ? (
         <View style={styles.errorContainer}>
-          <ThemedText style={styles.errorText}>추천 장소가 없습니다.</ThemedText>
+          <ThemedText style={styles.errorText}>
+            추천 장소가 없습니다.
+          </ThemedText>
         </View>
       ) : (
         <View style={styles.listContainer}>
@@ -141,19 +145,18 @@ const styles = StyleSheet.create({
   },
   spinnerContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: '40%'
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: "40%",
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   errorText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
-

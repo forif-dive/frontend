@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function SignInScreen() {
   const router = useRouter();
   const height = Dimensions.get("window").height;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
       <ThemedView

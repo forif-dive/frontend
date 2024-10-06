@@ -2,9 +2,10 @@ import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { FieldCard } from "@/components/field/FieldCard";
-import { fields } from "@/constants/field.constant";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { getCategory } from "@/services/category.service"; // API 서비스 호출
 import usePreferenceStore from "@/stores/preference.store";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
@@ -14,6 +15,17 @@ export default function FieldScreen() {
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const { setPreferences } = usePreferenceStore();
   const windowWidth = useWindowWidth();
+
+  // 카테고리 데이터를 불러오는 useQuery
+  const {
+    data: fieldsData,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["fields"],
+    queryFn: () => getCategory(),
+  });
+
   function handleSelectField(field: string) {
     if (selectedFields.includes(field)) {
       setSelectedFields(selectedFields.filter((f) => f !== field));
@@ -29,6 +41,24 @@ export default function FieldScreen() {
       params: { selectedFields },
     });
   };
+
+  // 로딩 중일 때 처리
+  if (isLoading) {
+    return (
+      <ThemedView style={styles.loadingContainer}>
+        <ThemedText>로딩 중...</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  // 에러 처리
+  if (error) {
+    return (
+      <ThemedView style={styles.loadingContainer}>
+        <ThemedText>데이터를 불러오는 중 오류가 발생했습니다.</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <>
@@ -51,7 +81,7 @@ export default function FieldScreen() {
             </ThemedText>
           </>
         }
-        data={fields}
+        data={fieldsData ? Object.keys(fieldsData) : []} // 필드 데이터의 키(카테고리명) 가져오기
         numColumns={2}
         renderItem={({ item: field }) => (
           <FieldCard
@@ -88,5 +118,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 24,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
