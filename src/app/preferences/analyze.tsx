@@ -19,7 +19,7 @@ export default function AnalyzeScreen() {
   useEffect(() => {
     if (progress < 1) {
       const timer = setTimeout(() => {
-        setProgress((prevProgress) => Math.min(prevProgress + 0.1, 1));
+        setProgress((prevProgress) => Math.min(prevProgress + 0.5, 1));
       }, 500);
       return () => clearTimeout(timer);
     }
@@ -83,7 +83,7 @@ export default function AnalyzeScreen() {
           onPress={() => router.push("/(tabs)/")}
           disabled={progress !== 1}
         >
-          준성님으로 시작하기!
+          시작하기!
         </Button>
       </ThemedView>
     </SafeAreaView>

@@ -7,7 +7,7 @@ import { ThemedView } from "../common/ThemedView";
 export type ResultCardProps = {
   picture: string;
   title: string;
-  distance: string;
+  distance: number | string;
   desc: string;
   meter: number;
 };
@@ -57,7 +57,11 @@ export function ResultCard({
             {meter}m
           </ThemedText>
         </View>
-        <ThemedText style={{ fontWeight: "medium", fontSize: 15 }}>
+        <ThemedText
+          style={{ fontWeight: "medium", fontSize: 15 }}
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
           {desc}
         </ThemedText>
         <View
@@ -68,9 +72,11 @@ export function ResultCard({
             alignItems: "center",
           }}
         >
-          <ThemedText style={{ fontSize: 14, color: Colors.icon }}>
-            {distance}
-          </ThemedText>
+          <Pressable onPress={onSave}>
+            <ThemedText style={{ fontSize: 14, color: Colors.icon }}>
+              자세히 보기
+            </ThemedText>
+          </Pressable>
           <Pressable onPress={onSave}>
             <ThemedText
               style={{

@@ -17,28 +17,28 @@ const activity = "러닝";
 
 const mockData: LifeStyleCardProps[] = [
   {
-    activity: "낚시",
+    activity: "러닝",
     Icon: () => <FontAwesome5 name="running" size={24} color={Colors.tint} />,
-    places: ["부산진역", "부산대역", "부전역"],
+    places: ["동래역", "신해운대역", "개운포역"],
   },
   {
     activity: "수영",
     Icon: () => (
       <FontAwesome6 name="person-swimming" size={24} color={Colors.tint} />
     ),
-    places: ["수영1", "수영2", "수영3", "수영4", "수영5"],
+    places: ["오시리아역", "좌천역", "일광"],
+  },
+  {
+    activity: "독서",
+    Icon: () => <FontAwesome6 name="book" size={24} color={Colors.tint} />,
+    places: ["벡스코역", "송정역"],
   },
   {
     activity: "스키",
     Icon: () => (
       <FontAwesome6 name="person-skiing" size={24} color={Colors.tint} />
     ),
-    places: ["롯데백화점 센텀시티점", "노란마켓 부산해운대센텀점"],
-  },
-  {
-    activity: "독서",
-    Icon: () => <FontAwesome6 name="book" size={24} color={Colors.tint} />,
-    places: ["독서1", "독서2"],
+    places: ["정선역"],
   },
 ];
 
@@ -80,7 +80,7 @@ export default function LifeStyleScreen() {
               ]}
               color={Colors.tint}
             >
-              부산진역
+              송정역
             </ThemedText>
             을 추천드려요.
           </ThemedText>

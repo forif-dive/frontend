@@ -21,17 +21,18 @@ export default function RootLayout() {
   if (!loaded && !error) {
     return null;
   }
+
   const queryClient = new QueryClient();
   return (
-    <GestureHandlerRootView>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="preferences" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="preferences" options={{ headerShown: false }} />
         </Stack>
         <Toast position="bottom" bottomOffset={40} />
-      </QueryClientProvider>
-    </GestureHandlerRootView>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }
