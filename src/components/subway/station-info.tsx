@@ -7,7 +7,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import Spinner from "../common/Spinner";
-import SubwayMapComponent from "./subway-map.component";
+import SubwayMapComponent from "./subway-map";
 
 const API_URL = "http://3.36.99.77:8000";
 

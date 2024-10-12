@@ -1,5 +1,5 @@
 import { stations } from "@/constants/stations.constant";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -28,7 +28,7 @@ const SubwayMapComponent: React.FC<SubwayMapProps> = ({
   const [selectedStation, setSelectedStation] = useState<Station | null>(
     initialStation || null
   );
-  const windowWidth = useWindowWidth();
+  const { screenWidth } = useWindowSize();
 
   useEffect(() => {
     if (initialStation) {
@@ -43,7 +43,7 @@ const SubwayMapComponent: React.FC<SubwayMapProps> = ({
   };
 
   const totalWidth = stations.length * STATION_WIDTH;
-  const contentWidth = totalWidth + windowWidth - STATION_WIDTH;
+  const contentWidth = totalWidth + screenWidth - STATION_WIDTH;
 
   return (
     <View style={styles.outerContainer}>
@@ -52,8 +52,8 @@ const SubwayMapComponent: React.FC<SubwayMapProps> = ({
         style={styles.container}
         contentContainerStyle={{
           width: contentWidth,
-          paddingLeft: windowWidth / 2 - STATION_WIDTH / 2,
-          paddingRight: windowWidth / 2 + STATION_WIDTH / 2,
+          paddingLeft: screenWidth / 2 - STATION_WIDTH / 2,
+          paddingRight: screenWidth / 2 + STATION_WIDTH / 2,
         }}
         showsHorizontalScrollIndicator={false}
       >

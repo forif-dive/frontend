@@ -1,4 +1,5 @@
 import { Input } from "@/components/common/Input";
+import { Separator } from "@/components/common/Separator";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { RecommendBtn } from "@/components/home/RecommendBtn";
@@ -6,6 +7,7 @@ import { RecommendLabel } from "@/components/home/RecommendLabel";
 import { ResultCard } from "@/components/home/ResultCard";
 import useLocation from "@/hooks/useLocation";
 import { useTypingAnimation } from "@/hooks/useTypingAnimation";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { chat } from "@/services/chat.service";
 import { Greeting } from "@/services/place.service";
 import {
@@ -16,14 +18,13 @@ import usePreferenceStore from "@/stores/preference.store";
 import { Attraction, Recommendation } from "@/types/station";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Dimensions, FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const { location, isLoading } = useLocation();
   const { preferences } = usePreferenceStore();
-  const insets = useSafeAreaInsets();
-  const windowHeight = Dimensions.get("window").height;
+  const { screenHeight } = useWindowSize();
 
   const [inputList, setInputList] = useState<
     (string | Recommendation | Attraction)[]
@@ -78,15 +79,11 @@ export default function HomeScreen() {
     retry: false,
   });
 
-  function recommendationToString(recommendation: Recommendation): string {
-    return `Attraction Name: ${recommendation.name}, Description: ${recommendation.description}, Distance: ${recommendation.distance}m, Time: ${recommendation.time}min, Image URL: ${recommendation.image_url}`;
-  }
-
   function handleLabelClick(label: string) {
     setIsLabelVisible(false);
-    if (attractions && !inputList.includes(label)) {
+    if (attractions && label.includes("다른 구경거리")) {
       setInputList([...inputList, label, ...attractions.attractions]);
-    } else if (!inputList.includes(label)) {
+    } else {
       setInputList([...inputList, label]);
     }
 
@@ -133,9 +130,9 @@ export default function HomeScreen() {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
-          <>
+          <ThemedView>
             <ThemedText
-              type="title"
+              type="title1"
               style={{
                 fontWeight: "medium",
                 fontSize: 28,
@@ -154,7 +151,7 @@ export default function HomeScreen() {
                 alignItems: "flex-end",
               }}
             >
-              <ThemedText type="defaultSemiBold">
+              <ThemedText>
                 {isStationLoading
                   ? "근처 역 정보를 불러오는 중..."
                   : `현재 위치 : ${
@@ -162,19 +159,10 @@ export default function HomeScreen() {
                     }`}
               </ThemedText>
             </ThemedView>
-          </>
+          </ThemedView>
         }
-        data={inputList || []}
-        ItemSeparatorComponent={() => (
-          <ThemedView
-            style={{
-              height: 2,
-              backgroundColor: "#E5E5E5",
-              marginVertical: 24,
-            }}
-          />
-        )}
-        // Result
+        data={inputList}
+        ItemSeparatorComponent={() => <Separator gap={24} />}
         renderItem={({ item }) => {
           const isUser = typeof item === "string";
 
@@ -183,8 +171,7 @@ export default function HomeScreen() {
               <ThemedText
                 style={{
                   alignSelf: "flex-end",
-                  padding: 10,
-                  borderRadius: 10,
+                  padding: 8,
                   marginVertical: 4,
                 }}
               >
@@ -206,7 +193,7 @@ export default function HomeScreen() {
         }}
         ListFooterComponent={
           <>
-            {greeting?.recommendations && <RecommendBtn />}
+            <RecommendBtn />
             {greeting?.recommendations && isLabelVisible && (
               <ThemedView style={styles.recommendContainer}>
                 <RecommendLabel
@@ -230,12 +217,12 @@ export default function HomeScreen() {
             )}
           </>
         }
+        contentContainerStyle={{ paddingBottom: 64 }}
       />
-      {/* Input */}
       <ThemedView
         style={{
           position: "absolute",
-          top: windowHeight - insets.bottom - 220,
+          top: screenHeight - useSafeAreaInsets().bottom - 220,
           width: "100%",
           left: 16,
         }}
@@ -250,6 +237,10 @@ export default function HomeScreen() {
       </ThemedView>
     </ThemedView>
   );
+}
+
+function recommendationToString(recommendation: Recommendation): string {
+  return `Attraction Name: ${recommendation.name}, Description: ${recommendation.description}, Distance: ${recommendation.distance}m, Time: ${recommendation.time}min, Image URL: ${recommendation.image_url}`;
 }
 
 const styles = StyleSheet.create({

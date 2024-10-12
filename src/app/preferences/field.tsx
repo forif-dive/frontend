@@ -2,7 +2,7 @@ import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { FieldCard } from "@/components/field/FieldCard";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { getCategory } from "@/services/category.service"; // API 서비스 호출
 import usePreferenceStore from "@/stores/preference.store";
 import { useQuery } from "@tanstack/react-query";
@@ -14,9 +14,8 @@ export default function FieldScreen() {
   const router = useRouter();
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const { setPreferences } = usePreferenceStore();
-  const windowWidth = useWindowWidth();
+  const { screenWidth } = useWindowSize();
 
-  // 카테고리 데이터를 불러오는 useQuery
   const {
     data: fieldsData,
     isLoading,
@@ -53,6 +52,7 @@ export default function FieldScreen() {
 
   // 에러 처리
   if (error) {
+    console.error(error);
     return (
       <ThemedView style={styles.loadingContainer}>
         <ThemedText>데이터를 불러오는 중 오류가 발생했습니다.</ThemedText>
@@ -68,11 +68,11 @@ export default function FieldScreen() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <>
-            <ThemedText type="title" style={{ marginBottom: 8 }}>
+            <ThemedText type="title1" style={{ marginBottom: 8 }}>
               준성님의 라이프스타일을 선택해주세요.
             </ThemedText>
             <ThemedText
-              type="subtitle"
+              type="footnote"
               style={{ marginBottom: 40, fontWeight: "medium" }}
               color="#656F79"
             >
@@ -81,13 +81,13 @@ export default function FieldScreen() {
             </ThemedText>
           </>
         }
-        data={fieldsData ? Object.keys(fieldsData) : []} // 필드 데이터의 키(카테고리명) 가져오기
+        data={fieldsData ? Object.keys(fieldsData) : []}
         numColumns={2}
         renderItem={({ item: field }) => (
           <FieldCard
             onPress={() => handleSelectField(field)}
             selected={selectedFields.includes(field)}
-            width={windowWidth / 2 - 48}
+            width={screenWidth / 2 - 48}
           >
             {field}
           </FieldCard>

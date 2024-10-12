@@ -3,13 +3,14 @@ import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import AnimatedLineDrawing from "@/components/sign-in/AnimatedLineDrawing";
 import { Colors } from "@/constants/colors.constant";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { useRouter } from "expo-router";
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignInScreen() {
   const router = useRouter();
-  const height = Dimensions.get("window").height;
+  const { screenHeight } = useWindowSize();
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
@@ -17,7 +18,7 @@ export default function SignInScreen() {
         style={[
           styles.container,
           {
-            minHeight: height - 160,
+            minHeight: screenHeight - 160,
           },
         ]}
       >
@@ -33,7 +34,7 @@ export default function SignInScreen() {
         <AnimatedLineDrawing />
       </ThemedView>
       <ThemedView style={styles.buttonContainer}>
-        <Button onPress={() => router.push("/preferences")}>
+        <Button variant="outlined" onPress={() => router.push("/preferences")}>
           바로 시작하기
         </Button>
       </ThemedView>

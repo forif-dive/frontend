@@ -2,16 +2,15 @@ import { Button } from "@/components/common/Button";
 import { ThemedText } from "@/components/common/ThemedText";
 import { ThemedView } from "@/components/common/ThemedView";
 import { Colors } from "@/constants/colors.constant";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import * as Progress from "react-native-progress";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AnalyzeScreen() {
-  const windowWidth = useWindowWidth();
-  const windowHeight = Dimensions.get("window").height;
+  const { screenHeight, screenWidth } = useWindowSize();
 
   const [progress, setProgress] = useState(0);
   const router = useRouter();
@@ -31,7 +30,7 @@ export default function AnalyzeScreen() {
         style={[
           styles.container,
           {
-            minHeight: windowHeight - 160,
+            minHeight: screenHeight - 160,
           },
         ]}
       >
@@ -48,7 +47,7 @@ export default function AnalyzeScreen() {
         </ThemedText>
         <Progress.Bar
           progress={progress}
-          width={windowWidth - 48}
+          width={screenWidth - 48}
           color={Colors.tint}
         />
         <View

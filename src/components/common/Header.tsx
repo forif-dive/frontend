@@ -18,7 +18,7 @@ export function Header({ title = "Header Title" }: { title?: string }) {
         >
           <Feather name="arrow-left" size={24} />
         </TouchableOpacity>
-        <ThemedText type="subtitle">{title}</ThemedText>
+        <ThemedText type="headline">{title}</ThemedText>
         <ThemedView />
       </ThemedView>
     </SafeAreaView>

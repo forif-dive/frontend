@@ -1,4 +1,5 @@
 import { Colors } from "@/constants/colors.constant";
+import { formatDistance } from "@/utils/format-distance";
 import { useState } from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import Toast from "react-native-toast-message";
@@ -54,7 +55,7 @@ export function ResultCard({
         >
           <ThemedText type="defaultSemiBold">{title}</ThemedText>
           <ThemedText style={{ fontSize: 11, color: Colors.icon }}>
-            {meter}m
+            {formatDistance(meter)}
           </ThemedText>
         </View>
         <ThemedText
