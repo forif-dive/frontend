@@ -22,10 +22,11 @@ export default function LanguageScreen() {
           },
         ]}
       >
-        <ThemedText type="title" style={{ marginBottom: 8 }}>
+        <ThemedText type="title1" style={{ marginBottom: 8 }}>
           Which Languages do you prefer?
         </ThemedText>
         <ThemedText
+          type="subhead"
           style={{ marginBottom: 40, fontWeight: "medium" }}
           color="#656F79"
         >
@@ -41,9 +42,7 @@ export default function LanguageScreen() {
             marginBottom: 16,
           }}
         >
-          <ThemedText type="defaultSemiBold" style={{ fontSize: 20 }}>
-            한국어
-          </ThemedText>
+          <ThemedText style={{ fontSize: 20 }}>한국어</ThemedText>
           <RadioButton isSelect={isKorean} onPress={() => setIsKorean(true)} />
         </ThemedView>
         <ThemedView
@@ -54,9 +53,7 @@ export default function LanguageScreen() {
             justifyContent: "space-between",
           }}
         >
-          <ThemedText type="defaultSemiBold" style={{ fontSize: 20 }}>
-            English
-          </ThemedText>
+          <ThemedText style={{ fontSize: 20 }}>English</ThemedText>
           <RadioButton
             isSelect={!isKorean}
             onPress={() => setIsKorean(false)}

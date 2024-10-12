@@ -113,7 +113,7 @@ export default function LifeStyleScreen() {
         enablePanDownToClose
       >
         <BottomSheetView style={styles.contentContainer}>
-          <ThemedText type="subtitle" style={{ marginTop: 16 }}>
+          <ThemedText type="headline" style={{ marginTop: 16 }}>
             {selectedActivity && selectedActivity.activity} 저장 목록 수정
           </ThemedText>
           <FlatList

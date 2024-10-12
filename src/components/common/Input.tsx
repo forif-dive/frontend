@@ -9,7 +9,7 @@ export function Input({ ...props }: TextInputProps) {
       style={[
         styles.input,
         {
-          borderColor: isFocused ? Colors.tint : "#E5E5E5",
+          borderColor: isFocused ? Colors.tint : Colors.border,
         },
       ]}
       onFocus={() => setIsFocused(true)}
@@ -30,6 +30,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: "#E5E5E5",
+    borderColor: Colors.border,
   },
 });

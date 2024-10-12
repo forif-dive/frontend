@@ -52,11 +52,11 @@ export default function CategoryScreen() {
             },
           ]}
         >
-          <ThemedText type="title" style={{ marginBottom: 8 }}>
+          <ThemedText type="title1" style={{ marginBottom: 8 }}>
             준성님의 라이프스타일을 선택해주세요.
           </ThemedText>
           <ThemedText
-            type="subtitle"
+            type="subhead"
             style={{ marginBottom: 40, fontWeight: "medium" }}
             color="#656F79"
           >
@@ -67,7 +67,7 @@ export default function CategoryScreen() {
           {filteredData.map(([category, options]) => (
             <View key={category}>
               <ThemedText
-                type="subtitle"
+                type="subhead"
                 style={{ marginBottom: 32 }}
                 key={category}
               >

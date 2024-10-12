@@ -1,4 +1,5 @@
-import { useWindowWidth } from "@/hooks/useWindowWidth";
+import { Colors } from "@/constants/colors.constant";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import React, { useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
@@ -12,7 +13,7 @@ const AnimatedLine = Animated.createAnimatedComponent(Line);
 
 export default function AnimatedLineDrawing() {
   const x2 = useSharedValue(0);
-  const windowWidth = useWindowWidth();
+  const { screenWidth } = useWindowSize();
 
   const animatedProps = useAnimatedProps(() => {
     return {
@@ -21,19 +22,19 @@ export default function AnimatedLineDrawing() {
   });
 
   useEffect(() => {
-    x2.value = withTiming(windowWidth - 48, { duration: 1200 });
-  }, [windowWidth, x2]);
+    x2.value = withTiming(screenWidth - 48, { duration: 1200 });
+  }, [screenWidth, x2]);
 
   return (
     <View>
-      <Svg height="240" width={windowWidth}>
+      <Svg height="240" width={screenWidth}>
         <AnimatedLine
           x1="0"
           y1="0"
           x2="50"
           y2="0"
-          stroke="black"
-          strokeWidth="5"
+          stroke={Colors.tint}
+          strokeWidth="8"
           animatedProps={animatedProps}
         />
       </Svg>

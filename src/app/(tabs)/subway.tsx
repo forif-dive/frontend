@@ -2,8 +2,8 @@ import { ThemedView } from "@/components/common/ThemedView";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import LineInfoComponent from "@/components/subway/line-info.component";
-import StationInfoComponent from "@/components/subway/station-info.component";
+import LineInfoComponent from "@/components/subway/line-info";
+import StationInfoComponent from "@/components/subway/station-info";
 
 export default function SubwayScreen() {
   const [activeSection, setActiveSection] = useState<number | null>(0);
@@ -51,7 +51,6 @@ export default function SubwayScreen() {
           )}
         </View>
       ))}
-
     </ThemedView>
   );
 }
